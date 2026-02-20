@@ -176,11 +176,15 @@
         <canvas id="waifu-canvas" width="280" height="320"></canvas>
     </div>
 
-    <!-- 🌟 全球最稳定的 jsdelivr 节点：解决被拦截、被墙导致白屏的问题 🌟 -->
+    <!-- 🌟 终极解决方案：同时引入新旧双核心，彻底解决引擎初始化失败的问题 🌟 -->
+    <!-- 1. Cubism 2 Core (旧版核心，哪怕不用也必须引入当占位符，否则引擎会罢工报错) -->
+    <script src="https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js"></script>
+    <!-- 2. Cubism 4 Core (真正用于解析芙莉莲 .moc3 的现代核心) -->
     <script src="https://cdn.jsdelivr.net/npm/live2dcubismcore@1.0.3/live2dcubismcore.min.js"></script>
+    <!-- 3. PIXI 渲染引擎 -->
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
-    <!-- ⚠️ 关键修复：将 index.min.js 替换为专属的 cubism4.min.js，解决报错问题 -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
+    <!-- 4. PIXI Live2D Display (最强大的全能加载器) -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js"></script>
 
     <script>
         // ==========================================
