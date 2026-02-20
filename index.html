@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>学習日記 - 学习日记</title>
-    <!-- 引入 Noto 字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
-    <!-- 🌟 严格参照项目：引入原版 FontAwesome 图标库 🌟 -->
+    <!-- 引入 FontAwesome 图标库，还原原版工具栏 UI -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
     
     <style>
@@ -78,7 +77,6 @@
             transition: all 0.3s ease-in-out;
         }
 
-        /* 侧边工具栏 */
         #waifu-tool {
             display: flex;
             flex-direction: column;
@@ -89,67 +87,33 @@
             transform: translateX(20px);
             transition: all 0.3s;
         }
-        #waifu:hover #waifu-tool {
-            opacity: 1;
-            transform: translateX(0);
-        }
+        #waifu:hover #waifu-tool { opacity: 1; transform: translateX(0); }
+        
         #waifu-tool span {
-            display: block;
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            text-align: center;
-            color: #5b6c7d; /* 原版灰色图标 */
-            cursor: pointer;
-            transition: color 0.2s;
-            font-size: 18px;
-            margin-bottom: 8px;
+            display: block; width: 32px; height: 32px; line-height: 32px;
+            text-align: center; color: #5b6c7d; cursor: pointer;
+            transition: color 0.2s; font-size: 18px; margin-bottom: 8px;
         }
-        #waifu-tool span:hover { color: #0684bd; } /* 原版浅蓝色悬停 */
+        #waifu-tool span:hover { color: #0684bd; }
 
-        /* 画布 */
-        #waifu-canvas {
-            pointer-events: auto;
-            cursor: grab;
-        }
+        #waifu-canvas { pointer-events: auto; cursor: grab; }
         #waifu-canvas:active { cursor: grabbing; }
 
-        /* 原版圆角聊天气泡 */
         #waifu-tips {
-            position: absolute;
-            top: -60px;
-            right: 40px;
-            width: 250px;
-            min-height: 40px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid #e1e1e1;
-            border-radius: 12px;
-            padding: 10px 15px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
-            font-size: 14px;
-            color: #333;
-            opacity: 0;
-            pointer-events: auto;
-            transition: opacity 0.3s;
-            word-break: break-all;
+            position: absolute; top: -70px; right: 40px; width: 250px; min-height: 40px;
+            background-color: rgba(255, 255, 255, 0.95); border: 1px solid #e1e1e1;
+            border-radius: 12px; padding: 10px 15px; box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            font-size: 13px; color: #333; opacity: 0; pointer-events: auto;
+            transition: opacity 0.3s; word-break: break-all;
         }
-        /* 气泡的小尾巴 */
         #waifu-tips::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            right: 30px;
-            width: 15px;
-            height: 15px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-right: 1px solid #e1e1e1;
-            border-bottom: 1px solid #e1e1e1;
+            content: ''; position: absolute; bottom: -8px; right: 30px;
+            width: 15px; height: 15px; background-color: rgba(255, 255, 255, 0.95);
+            border-right: 1px solid #e1e1e1; border-bottom: 1px solid #e1e1e1;
             transform: rotate(45deg);
         }
-        .waifu-tips-active {
-            opacity: 1 !important;
-            animation: shake 0.8s ease-in-out;
-        }
+        .waifu-tips-active { opacity: 1 !important; animation: shake 0.8s ease-in-out; }
+        
         @keyframes shake {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
@@ -158,7 +122,6 @@
 </head>
 <body>
 
-    <!-- 真实密码遮罩 -->
     <div id="auth-overlay">
         <div class="auth-card">
             <h2 style="border:none; margin:0; font-size: 18px;">空間認証</h2>
@@ -199,11 +162,10 @@
         </div>
     </div>
 
-    <!-- 🌟 定制的看板娘 UI 容器 (完全还原项目DOM结构) 🌟 -->
+    <!-- 看板娘UI -->
     <div id="waifu">
         <div id="waifu-tips"></div>
         
-        <!-- 工具栏 -->
         <div id="waifu-tool">
             <span class="fa fa-lg fa-comment" onclick="showMessage('要好好学习日语哦！不要偷懒~')" title="聊天"></span>
             <span class="fa fa-lg fa-paper-plane" onclick="showMessage('魔法使的寿命可是很长的。')" title="一言"></span>
@@ -211,18 +173,17 @@
             <span class="fa fa-lg fa-times" onclick="document.getElementById('waifu').style.display='none'" title="隐藏"></span>
         </div>
         
-        <!-- 画布 -->
         <canvas id="waifu-canvas" width="280" height="320"></canvas>
     </div>
 
-    <!-- 🌟 核心引擎替换区：使用最新官方 Core 完美支持 .moc3 🌟 -->
-    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+    <!-- 🌟 全球最稳定的 jsdelivr 节点：解决被拦截、被墙导致白屏的问题 🌟 -->
+    <script src="https://cdn.jsdelivr.net/npm/live2dcubismcore@1.0.3/live2dcubismcore.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js"></script>
 
     <script>
         // ==========================================
-        // 前后端交互逻辑（保留了你最新的带有删除功能的完整逻辑）
+        // 前后端交互逻辑
         // ==========================================
         const API_BASE = '/api/diary';
         let currentPwd = localStorage.getItem('site_pwd') || '';
@@ -233,7 +194,6 @@
             if (currentPwd) loadEntries(true); 
         };
 
-        // 【验证密码】
         async function verifyPassword() {
             const pwdInput = document.getElementById('loginPwd').value;
             const msgEl = document.getElementById('login-msg');
@@ -254,7 +214,6 @@
             }
         }
 
-        // 【图片处理】
         function handleImageSelect(event) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
@@ -280,7 +239,6 @@
             document.getElementById('preview-container').style.display = 'none';
         }
 
-        // 【保存记录】
         async function saveEntry() {
             const memo = document.getElementById('memoInput').value.trim();
             const diary = document.getElementById('diaryInput').value.trim();
@@ -311,7 +269,6 @@
             }
         }
 
-        // 【获取记录】
         async function loadEntries(isInit = false) {
             const listEl = document.getElementById('entries-list');
             try {
@@ -328,7 +285,6 @@
             }
         }
 
-        // 【真实删除记录 API 请求】
         async function deleteEntry(id) {
             if (!confirm("确定要删除这条日记吗？这个魔法无法撤销哦！")) return;
             try {
@@ -378,11 +334,11 @@
         }
 
         // ==========================================
-        // 看板娘核心系统 (Pixi + 原版 FontAwesome UI)
+        // 看板娘核心系统 (带有自动错误诊断的 PIXI 引擎)
         // ==========================================
         let waifuTipsTimer = null;
 
-        function showMessage(text, timeout = 4000) {
+        function showMessage(text, timeout = 5000) {
             const tips = document.getElementById('waifu-tips');
             tips.innerHTML = text;
             tips.classList.add('waifu-tips-active');
@@ -394,29 +350,36 @@
         }
 
         async function initLive2D() {
+            // 一开始就显示正在加载
+            showMessage("🪄 正在召唤芙莉莲，请稍等...");
+
             const canvas = document.getElementById('waifu-canvas');
             const app = new PIXI.Application({
                 view: canvas, transparent: true, backgroundAlpha: 0, width: 280, height: 320
             });
 
-            // ⚠️ 确保大小写严格匹配！
+            // 如果报错 404，大概率是大小写错误或者路径写错了！
             const modelUrl = "./Frieren/Frieren.model3.json";
 
             try {
+                // 读取模型
                 const model = await PIXI.live2d.Live2DModel.from(modelUrl);
                 app.stage.addChild(model);
 
+                // 缩放适配
                 const scaleX = canvas.width / model.width;
                 const scaleY = canvas.height / model.height;
                 model.scale.set(Math.min(scaleX, scaleY) * 1.2); 
                 model.x = (canvas.width - model.width * model.scale.x) / 2;
                 model.y = canvas.height - model.height * model.scale.y + 20;
 
+                // 视线追踪
                 app.ticker.add(() => {
                     const mouse = app.renderer.plugins.interaction.mouse.global;
                     model.focus(mouse.x, mouse.y);
                 });
 
+                // 点击互动
                 model.on('pointertap', () => {
                     const hitTexts = [
                         "又点我？不好好学习的话，我可是会生气的。",
@@ -428,16 +391,27 @@
                     showMessage(text);
                 });
 
+                // 加载成功提示
                 setTimeout(() => {
                     if(document.getElementById('auth-overlay').style.display === 'none') {
                         showMessage("我准备好啦！");
+                    } else {
+                        showMessage("我已经到了，先输入密码进房间吧~");
                     }
-                }, 2000);
+                }, 1000);
 
             } catch (e) {
-                console.error("模型加载失败: ", e);
-                // 增加错误提示，如果部署后依然失败，控制台会给出精确的原因
-                showMessage("模型加载失败了...请按 F12 打开控制台检查哦！可能是文件没有传全。");
+                console.error("模型加载发生了致命错误: ", e);
+                // 🌟 【神级改动】直接把错误信息打印到气泡上，让你一目了然！ 🌟
+                let errorMsg = "模型加载失败：<br>";
+                if (e.message.includes("404")) {
+                    errorMsg += "⚠️ 找不到文件(404)！请严格检查 Frieren.model3.json 里面写的文件名<b>大小写</b>是否和实际文件一模一样！Linux服务器对大小写极度敏感！";
+                } else if (e.message.includes("fetch")) {
+                    errorMsg += "⚠️ 网络加载失败！可能是 Cloudflare 抽风，或者路径依然写错。";
+                } else {
+                    errorMsg += `<span style="color:red;font-size:12px;">${e.message}</span><br>按 F12 看看控制台的红色报错吧。`;
+                }
+                showMessage(errorMsg, 20000); // 错误信息停留20秒
             }
         }
     </script>
