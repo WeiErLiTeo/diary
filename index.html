@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>学習日記 - 学习日记</title>
+    <!-- 引入 Noto 字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+    <!-- 🌟 严格参照项目：引入原版 FontAwesome 图标库 🌟 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+    
     <style>
         :root {
             --bg-color: #F7F5F0; --card-bg: #FFFFFF; --text-main: #333333; --text-light: #8E8B82;
@@ -61,16 +65,17 @@
         .msg { text-align: center; margin-top: 10px; font-size: 13px; }
 
         /* ========================================= */
-        /* 手工复刻的 stevenjoezhang 风格看板娘外壳UI */
+        /* 严格参照 live2d-widget 的原版 UI 样式 */
         /* ========================================= */
         #waifu {
             position: fixed;
             bottom: 0;
             right: 0;
             z-index: 9998;
-            pointer-events: none; /* 让容易阻挡网页的空白区域可穿透 */
+            pointer-events: none; 
             display: flex;
             align-items: flex-end;
+            transition: all 0.3s ease-in-out;
         }
 
         /* 侧边工具栏 */
@@ -94,17 +99,13 @@
             height: 32px;
             line-height: 32px;
             text-align: center;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            border-radius: 50%;
-            margin-bottom: 8px;
+            color: #5b6c7d; /* 原版灰色图标 */
             cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: background 0.2s;
-            font-size: 16px;
+            transition: color 0.2s;
+            font-size: 18px;
+            margin-bottom: 8px;
         }
-        #waifu-tool span:hover { background-color: var(--memo-bg); }
+        #waifu-tool span:hover { color: #0684bd; } /* 原版浅蓝色悬停 */
 
         /* 画布 */
         #waifu-canvas {
@@ -113,20 +114,20 @@
         }
         #waifu-canvas:active { cursor: grabbing; }
 
-        /* 聊天气泡 */
+        /* 原版圆角聊天气泡 */
         #waifu-tips {
             position: absolute;
             top: -60px;
-            right: 50px;
-            width: 220px;
+            right: 40px;
+            width: 250px;
             min-height: 40px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e1e1e1;
             border-radius: 12px;
-            padding: 12px 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 10px 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
             font-size: 14px;
-            color: var(--text-main);
+            color: #333;
             opacity: 0;
             pointer-events: auto;
             transition: opacity 0.3s;
@@ -137,12 +138,12 @@
             content: '';
             position: absolute;
             bottom: -8px;
-            right: 40px;
+            right: 30px;
             width: 15px;
             height: 15px;
-            background-color: var(--card-bg);
-            border-right: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-right: 1px solid #e1e1e1;
+            border-bottom: 1px solid #e1e1e1;
             transform: rotate(45deg);
         }
         .waifu-tips-active {
@@ -198,29 +199,30 @@
         </div>
     </div>
 
-    <!-- 🌟 定制的看板娘 UI 容器 🌟 -->
+    <!-- 🌟 定制的看板娘 UI 容器 (完全还原项目DOM结构) 🌟 -->
     <div id="waifu">
         <div id="waifu-tips"></div>
         
         <!-- 工具栏 -->
         <div id="waifu-tool">
-            <span onclick="showMessage('要好好学习日语哦！不要偷懒~')" title="聊天">💬</span>
-            <span onclick="showMessage('魔法使的寿命可是很长的。')" title="一言">✨</span>
-            <span onclick="document.getElementById('waifu').style.display='none'" title="隐藏">❌</span>
+            <span class="fa fa-lg fa-comment" onclick="showMessage('要好好学习日语哦！不要偷懒~')" title="聊天"></span>
+            <span class="fa fa-lg fa-paper-plane" onclick="showMessage('魔法使的寿命可是很长的。')" title="一言"></span>
+            <span class="fa fa-lg fa-camera-retro" onclick="showMessage('照相机功能调试中...')" title="拍照"></span>
+            <span class="fa fa-lg fa-times" onclick="document.getElementById('waifu').style.display='none'" title="隐藏"></span>
         </div>
         
         <!-- 画布 -->
         <canvas id="waifu-canvas" width="280" height="320"></canvas>
     </div>
 
-    <!-- 引入强大的 PIXI + Live2D 引擎 -->
-    <script src="https://cdn.jsdelivr.net/npm/live2dcubismcore@1.0.3/live2dcubismcore.min.js"></script>
+    <!-- 🌟 核心引擎替换区：使用最新官方 Core 完美支持 .moc3 🌟 -->
+    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js"></script>
 
     <script>
         // ==========================================
-        // 前后端交互逻辑（已恢复真实 API）
+        // 前后端交互逻辑（保留了你最新的带有删除功能的完整逻辑）
         // ==========================================
         const API_BASE = '/api/diary';
         let currentPwd = localStorage.getItem('site_pwd') || '';
@@ -228,33 +230,27 @@
 
         window.onload = () => {
             initLive2D(); // 加载看板娘
-            if (currentPwd) loadEntries(true); // 真实环境加载数据
+            if (currentPwd) loadEntries(true); 
         };
 
-        // 【验证密码 - 真实校验】
+        // 【验证密码】
         async function verifyPassword() {
             const pwdInput = document.getElementById('loginPwd').value;
             const msgEl = document.getElementById('login-msg');
             if (!pwdInput) return;
-            
-            msgEl.textContent = '验证中...'; 
-            msgEl.style.color = 'var(--text-light)';
-            
+            msgEl.textContent = '验证中...'; msgEl.style.color = 'var(--text-light)';
             try {
                 const res = await fetch(API_BASE, { headers: { 'Authorization': pwdInput } });
                 if (res.ok) {
-                    currentPwd = pwdInput; 
-                    localStorage.setItem('site_pwd', currentPwd);
+                    currentPwd = pwdInput; localStorage.setItem('site_pwd', currentPwd);
                     document.getElementById('auth-overlay').style.display = 'none';
                     loadEntries(false);
                     setTimeout(() => showMessage("欢迎回来！今天也要好好记录哦~"), 1000);
                 } else {
-                    msgEl.textContent = '密码错误'; 
-                    msgEl.style.color = 'var(--error-color)';
+                    msgEl.textContent = '密码错误'; msgEl.style.color = 'var(--error-color)';
                 }
             } catch (err) {
-                msgEl.textContent = '网络错误'; 
-                msgEl.style.color = 'var(--error-color)';
+                msgEl.textContent = '网络错误'; msgEl.style.color = 'var(--error-color)';
             }
         }
 
@@ -284,56 +280,45 @@
             document.getElementById('preview-container').style.display = 'none';
         }
 
-        // 【保存记录 - 真实保存到数据库】
+        // 【保存记录】
         async function saveEntry() {
             const memo = document.getElementById('memoInput').value.trim();
             const diary = document.getElementById('diaryInput').value.trim();
             const msgEl = document.getElementById('save-msg');
 
             if (!memo && !diary && !currentImageBase64) {
-                msgEl.textContent = '请填写内容或上传图片'; 
-                msgEl.style.color = 'var(--error-color)'; 
-                return;
+                msgEl.textContent = '请填写内容或上传图片'; msgEl.style.color = 'var(--error-color)'; return;
             }
-            
-            msgEl.textContent = '保存中...'; 
-            msgEl.style.color = 'var(--text-light)';
+            msgEl.textContent = '保存中...'; msgEl.style.color = 'var(--text-light)';
             const payload = { memo, diary, image: currentImageBase64 };
 
             try {
                 const res = await fetch(API_BASE, {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json', 'Authorization': currentPwd },
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': currentPwd },
                     body: JSON.stringify(payload)
                 });
                 if (res.ok) {
-                    msgEl.textContent = '保存成功'; 
-                    msgEl.style.color = 'var(--accent-color)';
-                    document.getElementById('memoInput').value = ''; 
-                    document.getElementById('diaryInput').value = '';
-                    removeImage(); 
-                    loadEntries(false);
-                    showMessage("记录保存成功啦！真厉害~"); // 看板娘互动
+                    msgEl.textContent = '保存成功'; msgEl.style.color = 'var(--accent-color)';
+                    document.getElementById('memoInput').value = ''; document.getElementById('diaryInput').value = '';
+                    removeImage(); loadEntries(false);
+                    showMessage("记录保存成功啦！真厉害~"); 
                     setTimeout(() => msgEl.textContent = '', 2000);
                 } else {
-                    msgEl.textContent = '保存失败'; 
-                    msgEl.style.color = 'var(--error-color)';
+                    msgEl.textContent = '保存失败'; msgEl.style.color = 'var(--error-color)';
                 }
             } catch (err) {
-                msgEl.textContent = '网络错误'; 
-                msgEl.style.color = 'var(--error-color)';
+                msgEl.textContent = '网络错误'; msgEl.style.color = 'var(--error-color)';
             }
         }
 
-        // 【获取记录 - 从真实数据库读取】
+        // 【获取记录】
         async function loadEntries(isInit = false) {
             const listEl = document.getElementById('entries-list');
             try {
                 const res = await fetch(API_BASE, { headers: { 'Authorization': currentPwd } });
                 if (res.ok) {
                     if (isInit) document.getElementById('auth-overlay').style.display = 'none';
-                    const data = await res.json(); 
-                    renderEntries(data.entries);
+                    const data = await res.json(); renderEntries(data.entries);
                 } else {
                     if (isInit) localStorage.removeItem('site_pwd');
                     else listEl.innerHTML = '<p style="color:var(--error-color)">读取失败</p>';
@@ -343,20 +328,18 @@
             }
         }
 
-        // 【新增：真实删除记录 API 请求】
+        // 【真实删除记录 API 请求】
         async function deleteEntry(id) {
             if (!confirm("确定要删除这条日记吗？这个魔法无法撤销哦！")) return;
-            
             try {
-                // 向后端的 /api/diary 发送 DELETE 请求，并带上 ID
                 const res = await fetch(`${API_BASE}?id=${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': currentPwd }
                 });
                 
                 if (res.ok) {
-                    showMessage("已为你清除了这条记录的痕迹！"); // 看板娘互动
-                    loadEntries(false); // 刷新列表
+                    showMessage("已为你清除了这条记录的痕迹！"); 
+                    loadEntries(false);
                 } else {
                     alert('删除失败，可能没有权限。');
                 }
@@ -375,7 +358,6 @@
                 const date = new Date(item.timestamp);
                 const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
                 
-                // 删除按钮结构
                 let html = `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div class="entry-date" style="margin-bottom: 0;">${dateStr}</div>
@@ -395,13 +377,11 @@
             return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-
         // ==========================================
-        // 看板娘核心系统 (Pixi + 气泡交互)
+        // 看板娘核心系统 (Pixi + 原版 FontAwesome UI)
         // ==========================================
         let waifuTipsTimer = null;
 
-        // 控制聊天气泡显示
         function showMessage(text, timeout = 4000) {
             const tips = document.getElementById('waifu-tips');
             tips.innerHTML = text;
@@ -419,31 +399,24 @@
                 view: canvas, transparent: true, backgroundAlpha: 0, width: 280, height: 320
             });
 
-            // ⚠️【极度重要】配置你的芙莉莲路径！
-            // 我为了让你在右侧预览环境不出错，临时写了个网络公共测试模型的链接。
-            // 当你把你下载的 Frieren 文件夹放入 diary-main 之后，
-            // 请把下面这行链接改成你本地的相对路径，例如：
-            // const modelUrl = "./Frieren/Frieren.model3.json"; 
+            // ⚠️ 确保大小写严格匹配！
             const modelUrl = "./Frieren/Frieren.model3.json";
 
             try {
                 const model = await PIXI.live2d.Live2DModel.from(modelUrl);
                 app.stage.addChild(model);
 
-                // 根据画布自适应缩放人物
                 const scaleX = canvas.width / model.width;
                 const scaleY = canvas.height / model.height;
                 model.scale.set(Math.min(scaleX, scaleY) * 1.2); 
                 model.x = (canvas.width - model.width * model.scale.x) / 2;
                 model.y = canvas.height - model.height * model.scale.y + 20;
 
-                // 互动功能1：鼠标跟随注视
                 app.ticker.add(() => {
                     const mouse = app.renderer.plugins.interaction.mouse.global;
                     model.focus(mouse.x, mouse.y);
                 });
 
-                // 互动功能2：点击身体触发对话
                 model.on('pointertap', () => {
                     const hitTexts = [
                         "又点我？不好好学习的话，我可是会生气的。",
@@ -455,8 +428,6 @@
                     showMessage(text);
                 });
 
-                // 如果模型自带随机动作，会自动播放（视你的芙莉莲模型配置而定）
-                // 启动时的问候
                 setTimeout(() => {
                     if(document.getElementById('auth-overlay').style.display === 'none') {
                         showMessage("我准备好啦！");
@@ -464,7 +435,9 @@
                 }, 2000);
 
             } catch (e) {
-                console.error("模型加载失败，请检查 URL 是否正确: ", e);
+                console.error("模型加载失败: ", e);
+                // 增加错误提示，如果部署后依然失败，控制台会给出精确的原因
+                showMessage("模型加载失败了...请按 F12 打开控制台检查哦！可能是文件没有传全。");
             }
         }
     </script>
