@@ -7,242 +7,157 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 浅色模式 - 护眼和纸色 */
-            --bg-color: #F7F5F0;
-            --card-bg: #FFFFFF;
-            --text-main: #333333;
-            --text-light: #8E8B82;
-            --accent-color: #6B8E6B; /* 沉稳的绿色 */
-            --accent-hover: #526E52;
-            --border-color: #E8E4D9;
-            --memo-bg: #FFF9E6; /* 便签的淡黄色 */
-            --memo-border: #F2E3A9;
-            --error-color: #D37B7B;
+            --bg-color: #F7F5F0; --card-bg: #FFFFFF; --text-main: #333333; --text-light: #8E8B82;
+            --accent-color: #6B8E6B; --accent-hover: #526E52; --border-color: #E8E4D9;
+            --memo-bg: #FFF9E6; --memo-border: #F2E3A9; --error-color: #D37B7B;
         }
-
         @media (prefers-color-scheme: dark) {
             :root {
-                /* 深色模式适配 */
-                --bg-color: #121212;
-                --card-bg: #1E1E1E;
-                --text-main: #E0E0E0;
-                --text-light: #A0A0A0;
-                --accent-color: #82A882;
-                --accent-hover: #96C296;
-                --border-color: #333333;
-                --memo-bg: #2A2820;
-                --memo-border: #4A4630;
-                --error-color: #E59898;
+                --bg-color: #121212; --card-bg: #1E1E1E; --text-main: #E0E0E0; --text-light: #A0A0A0;
+                --accent-color: #82A882; --accent-hover: #96C296; --border-color: #333333;
+                --memo-bg: #2A2820; --memo-border: #4A4630; --error-color: #E59898;
             }
         }
-
         body {
-            font-family: 'Noto Serif JP', 'Yu Mincho', '宋体', serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.8;
-            margin: 0;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Noto Serif JP', 'Yu Mincho', '宋体', serif; background-color: var(--bg-color);
+            color: var(--text-main); line-height: 1.8; margin: 0; padding: 0;
+            -webkit-font-smoothing: antialiased; transition: background-color 0.3s, color 0.3s;
         }
-
-        .container {
-            max-width: 680px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        header h1 {
-            font-size: 26px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text-main);
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid var(--border-color);
-        }
-
-        h2 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-top: 0;
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        /* 文本框样式 */
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: inherit;
-            font-size: 15px;
-            color: var(--text-main);
-            background: transparent;
-            transition: all 0.3s ease;
-            resize: vertical;
-        }
+        .container { max-width: 680px; margin: 0 auto; padding: 20px; padding-bottom: 120px; }
+        header { text-align: center; margin: 30px 0; }
+        header h1 { font-size: 26px; font-weight: 600; margin-bottom: 5px; color: var(--text-main); }
+        .card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); padding: 25px; margin-bottom: 25px; border: 1px solid var(--border-color); }
+        h2 { font-size: 16px; font-weight: 600; color: var(--text-light); margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
         
-        textarea:focus {
-            border-color: var(--accent-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(107, 142, 107, 0.1);
-        }
-
-        /* 便签专属样式 */
-        .memo-box {
-            background-color: var(--memo-bg);
-            border: 1px solid var(--memo-border);
-            border-left: 4px solid #D6C27A;
-            margin-bottom: 20px;
-        }
-
-        /* 图片上传区 */
-        .upload-area {
-            margin-top: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 15px; color: var(--text-main); background: transparent; transition: all 0.3s ease; resize: vertical; }
+        textarea:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 2px rgba(107, 142, 107, 0.1); }
+        .memo-box { background-color: var(--memo-bg); border: 1px solid var(--memo-border); border-left: 4px solid #D6C27A; margin-bottom: 20px; }
         
-        input[type="file"] {
-            display: none;
-        }
-
-        .upload-btn {
-            background: transparent;
-            border: 1px dashed var(--accent-color);
-            color: var(--accent-color);
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .upload-btn:hover {
-            background: rgba(107, 142, 107, 0.1);
-        }
-
-        #preview-container {
-            display: none;
-            position: relative;
-            max-width: 150px;
-        }
-
-        #preview-img {
-            width: 100%;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-        }
-
-        .remove-img {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--error-color);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            text-align: center;
-            line-height: 18px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* 按钮 */
-        .btn-submit {
-            background: var(--accent-color);
-            color: #fff;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
+        .upload-area { margin-top: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        input[type="file"] { display: none; }
+        .upload-btn { background: transparent; border: 1px dashed var(--accent-color); color: var(--accent-color); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .upload-btn:hover { background: rgba(107, 142, 107, 0.1); }
+        
+        #preview-container { display: none; position: relative; max-width: 150px; }
+        #preview-img { width: 100%; border-radius: 6px; border: 1px solid var(--border-color); }
+        .remove-img { position: absolute; top: -8px; right: -8px; background: var(--error-color); color: white; border-radius: 50%; width: 20px; height: 20px; text-align: center; line-height: 18px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        
+        .btn-submit { background: var(--accent-color); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 15px; width: 100%; transition: background 0.2s; }
         .btn-submit:hover { background: var(--accent-hover); }
-
-        /* 历史记录 */
-        .entry-item {
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .entry-item:last-child { border-bottom: none; }
+        .btn-delete { background: transparent; border: 1px solid var(--error-color); color: var(--error-color); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+        .btn-delete:hover { background: var(--error-color); color: #fff; }
         
-        .entry-date {
-            font-size: 13px;
-            color: var(--text-light);
-            margin-bottom: 10px;
-        }
-
-        .entry-memo {
-            background: var(--memo-bg);
-            padding: 10px 15px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-bottom: 15px;
-            border-left: 3px solid #D6C27A;
-            white-space: pre-wrap;
-            color: var(--text-main);
-        }
-
-        .entry-text {
-            white-space: pre-wrap;
-            font-size: 15px;
-            margin-bottom: 10px;
-        }
-
-        .entry-image {
-            max-width: 100%;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        /* 密码遮罩 */
-        #auth-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-color); z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .auth-card {
-            background: var(--card-bg); padding: 30px; border-radius: 12px;
-            text-align: center; border: 1px solid var(--border-color);
-        }
-        .auth-card input {
-            padding: 10px; width: 100%; margin: 15px 0; border: 1px solid var(--border-color);
-            border-radius: 6px; text-align: center; font-size: 16px; background: transparent; color: var(--text-main);
-        }
-        .auth-card button {
-            background: var(--accent-color); color: white; border: none; padding: 10px 20px;
-            border-radius: 6px; cursor: pointer; width: 100%;
-        }
+        .entry-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); }
+        .entry-item:last-child { border-bottom: none; }
+        .entry-date { font-size: 13px; color: var(--text-light); }
+        .entry-memo { background: var(--memo-bg); padding: 10px 15px; border-radius: 4px; font-size: 14px; margin-bottom: 15px; border-left: 3px solid #D6C27A; white-space: pre-wrap; color: var(--text-main); }
+        .entry-text { white-space: pre-wrap; font-size: 15px; margin-bottom: 10px; }
+        .entry-image { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+        
+        #auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color); }
+        .auth-card input { padding: 10px; width: 100%; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 6px; text-align: center; font-size: 16px; background: transparent; color: var(--text-main); }
+        .auth-card button { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; }
         .msg { text-align: center; margin-top: 10px; font-size: 13px; }
+
+        /* ========================================= */
+        /* 手工复刻的 stevenjoezhang 风格看板娘外壳UI */
+        /* ========================================= */
+        #waifu {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 9998;
+            pointer-events: none; /* 让容易阻挡网页的空白区域可穿透 */
+            display: flex;
+            align-items: flex-end;
+        }
+
+        /* 侧边工具栏 */
+        #waifu-tool {
+            display: flex;
+            flex-direction: column;
+            pointer-events: auto;
+            margin-bottom: 50px;
+            margin-right: 10px;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s;
+        }
+        #waifu:hover #waifu-tool {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        #waifu-tool span {
+            display: block;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 50%;
+            margin-bottom: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+            font-size: 16px;
+        }
+        #waifu-tool span:hover { background-color: var(--memo-bg); }
+
+        /* 画布 */
+        #waifu-canvas {
+            pointer-events: auto;
+            cursor: grab;
+        }
+        #waifu-canvas:active { cursor: grabbing; }
+
+        /* 聊天气泡 */
+        #waifu-tips {
+            position: absolute;
+            top: -60px;
+            right: 50px;
+            width: 220px;
+            min-height: 40px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            font-size: 14px;
+            color: var(--text-main);
+            opacity: 0;
+            pointer-events: auto;
+            transition: opacity 0.3s;
+            word-break: break-all;
+        }
+        /* 气泡的小尾巴 */
+        #waifu-tips::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 40px;
+            width: 15px;
+            height: 15px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            transform: rotate(45deg);
+        }
+        .waifu-tips-active {
+            opacity: 1 !important;
+            animation: shake 0.8s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
     </style>
 </head>
 <body>
 
+    <!-- 真实密码遮罩 -->
     <div id="auth-overlay">
         <div class="auth-card">
             <h2 style="border:none; margin:0; font-size: 18px;">空間認証</h2>
@@ -259,14 +174,9 @@
 
         <div class="card">
             <h2>📝 新的一天</h2>
-            
-            <!-- 便签区 -->
             <textarea id="memoInput" class="memo-box" rows="2" placeholder="📌 便签 / 备忘录 (例如: 今晚记得复习动词变形...)"></textarea>
-            
-            <!-- 日记正文 -->
             <textarea id="diaryInput" rows="6" placeholder="今天学习了什么？记录一下吧..."></textarea>
             
-            <!-- 图片上传 -->
             <div class="upload-area">
                 <label for="imageUpload" class="upload-btn">📷 添加图片</label>
                 <input type="file" id="imageUpload" accept="image/*" onchange="handleImageSelect(event)">
@@ -288,69 +198,79 @@
         </div>
     </div>
 
+    <!-- 🌟 定制的看板娘 UI 容器 🌟 -->
+    <div id="waifu">
+        <div id="waifu-tips"></div>
+        
+        <!-- 工具栏 -->
+        <div id="waifu-tool">
+            <span onclick="showMessage('要好好学习日语哦！不要偷懒~')" title="聊天">💬</span>
+            <span onclick="showMessage('魔法使的寿命可是很长的。')" title="一言">✨</span>
+            <span onclick="document.getElementById('waifu').style.display='none'" title="隐藏">❌</span>
+        </div>
+        
+        <!-- 画布 -->
+        <canvas id="waifu-canvas" width="280" height="320"></canvas>
+    </div>
+
+    <!-- 引入强大的 PIXI + Live2D 引擎 -->
+    <script src="https://cdn.jsdelivr.net/npm/live2dcubismcore@1.0.3/live2dcubismcore.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js"></script>
+
     <script>
+        // ==========================================
+        // 前后端交互逻辑（已恢复真实 API）
+        // ==========================================
         const API_BASE = '/api/diary';
         let currentPwd = localStorage.getItem('site_pwd') || '';
-        let currentImageBase64 = null; // 存储当前选中的图片
+        let currentImageBase64 = null;
 
         window.onload = () => {
-            if (currentPwd) loadEntries(true);
+            initLive2D(); // 加载看板娘
+            if (currentPwd) loadEntries(true); // 真实环境加载数据
         };
 
+        // 【验证密码 - 真实校验】
         async function verifyPassword() {
             const pwdInput = document.getElementById('loginPwd').value;
             const msgEl = document.getElementById('login-msg');
             if (!pwdInput) return;
             
-            msgEl.textContent = '验证中...';
+            msgEl.textContent = '验证中...'; 
             msgEl.style.color = 'var(--text-light)';
-
+            
             try {
                 const res = await fetch(API_BASE, { headers: { 'Authorization': pwdInput } });
                 if (res.ok) {
-                    currentPwd = pwdInput;
+                    currentPwd = pwdInput; 
                     localStorage.setItem('site_pwd', currentPwd);
                     document.getElementById('auth-overlay').style.display = 'none';
                     loadEntries(false);
+                    setTimeout(() => showMessage("欢迎回来！今天也要好好记录哦~"), 1000);
                 } else {
-                    msgEl.textContent = '密码错误';
+                    msgEl.textContent = '密码错误'; 
                     msgEl.style.color = 'var(--error-color)';
                 }
             } catch (err) {
-                msgEl.textContent = '网络错误，请确保KV和环境变量已正确配置';
+                msgEl.textContent = '网络错误'; 
                 msgEl.style.color = 'var(--error-color)';
             }
         }
 
-        // 处理图片选择与压缩
+        // 【图片处理】
         function handleImageSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    // 使用 Canvas 压缩图片，防止突破 KV 容量限制
                     const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const MAX_WIDTH = 1000; // 限制最大宽度
-
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // 转换为 base64，质量 0.8
+                    let width = img.width; let height = img.height; const MAX_WIDTH = 1000;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
                     currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
-                    
-                    // 显示预览
                     document.getElementById('preview-img').src = currentImageBase64;
                     document.getElementById('preview-container').style.display = 'block';
                 };
@@ -360,64 +280,59 @@
         }
 
         function removeImage() {
-            currentImageBase64 = null;
-            document.getElementById('imageUpload').value = '';
+            currentImageBase64 = null; document.getElementById('imageUpload').value = '';
             document.getElementById('preview-container').style.display = 'none';
         }
 
+        // 【保存记录 - 真实保存到数据库】
         async function saveEntry() {
             const memo = document.getElementById('memoInput').value.trim();
             const diary = document.getElementById('diaryInput').value.trim();
             const msgEl = document.getElementById('save-msg');
 
             if (!memo && !diary && !currentImageBase64) {
-                msgEl.textContent = '请填写内容或上传图片';
-                msgEl.style.color = 'var(--error-color)';
+                msgEl.textContent = '请填写内容或上传图片'; 
+                msgEl.style.color = 'var(--error-color)'; 
                 return;
             }
-
-            msgEl.textContent = '保存中...';
+            
+            msgEl.textContent = '保存中...'; 
             msgEl.style.color = 'var(--text-light)';
-
             const payload = { memo, diary, image: currentImageBase64 };
 
             try {
                 const res = await fetch(API_BASE, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': currentPwd
-                    },
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': currentPwd },
                     body: JSON.stringify(payload)
                 });
-
                 if (res.ok) {
-                    msgEl.textContent = '保存成功';
+                    msgEl.textContent = '保存成功'; 
                     msgEl.style.color = 'var(--accent-color)';
-                    document.getElementById('memoInput').value = '';
+                    document.getElementById('memoInput').value = ''; 
                     document.getElementById('diaryInput').value = '';
-                    removeImage();
+                    removeImage(); 
                     loadEntries(false);
+                    showMessage("记录保存成功啦！真厉害~"); // 看板娘互动
                     setTimeout(() => msgEl.textContent = '', 2000);
                 } else {
-                    msgEl.textContent = '保存失败';
+                    msgEl.textContent = '保存失败'; 
                     msgEl.style.color = 'var(--error-color)';
                 }
             } catch (err) {
-                msgEl.textContent = '网络错误';
+                msgEl.textContent = '网络错误'; 
                 msgEl.style.color = 'var(--error-color)';
             }
         }
 
+        // 【获取记录 - 从真实数据库读取】
         async function loadEntries(isInit = false) {
             const listEl = document.getElementById('entries-list');
-            
             try {
                 const res = await fetch(API_BASE, { headers: { 'Authorization': currentPwd } });
-
                 if (res.ok) {
                     if (isInit) document.getElementById('auth-overlay').style.display = 'none';
-                    const data = await res.json();
+                    const data = await res.json(); 
                     renderEntries(data.entries);
                 } else {
                     if (isInit) localStorage.removeItem('site_pwd');
@@ -428,51 +343,129 @@
             }
         }
 
+        // 【新增：真实删除记录 API 请求】
+        async function deleteEntry(id) {
+            if (!confirm("确定要删除这条日记吗？这个魔法无法撤销哦！")) return;
+            
+            try {
+                // 向后端的 /api/diary 发送 DELETE 请求，并带上 ID
+                const res = await fetch(`${API_BASE}?id=${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': currentPwd }
+                });
+                
+                if (res.ok) {
+                    showMessage("已为你清除了这条记录的痕迹！"); // 看板娘互动
+                    loadEntries(false); // 刷新列表
+                } else {
+                    alert('删除失败，可能没有权限。');
+                }
+            } catch (err) {
+                alert('网络错误，无法删除。');
+            }
+        }
+
         function renderEntries(entries) {
             const listEl = document.getElementById('entries-list');
             listEl.innerHTML = '';
-
-            if (!entries || entries.length === 0) {
-                listEl.innerHTML = '<p style="text-align: center; color: var(--text-light);">暂无记录</p>';
-                return;
-            }
+            if (!entries || entries.length === 0) { listEl.innerHTML = '<p style="text-align: center; color: var(--text-light);">暂无记录</p>'; return; }
 
             entries.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'entry-item';
-                
+                const div = document.createElement('div'); div.className = 'entry-item';
                 const date = new Date(item.timestamp);
                 const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
                 
-                let html = `<div class="entry-date">${dateStr}</div>`;
+                // 删除按钮结构
+                let html = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div class="entry-date" style="margin-bottom: 0;">${dateStr}</div>
+                        <button class="btn-delete" onclick="deleteEntry('${item.id}')">削除 (Delete)</button>
+                    </div>
+                `;
 
-                // 渲染便签
-                if (item.data.memo) {
-                    html += `<div class="entry-memo">📌 ${escapeHtml(item.data.memo)}</div>`;
-                }
-                
-                // 渲染正文
-                if (item.data.diary) {
-                    html += `<div class="entry-text">${escapeHtml(item.data.diary)}</div>`;
-                }
+                if (item.data.memo) html += `<div class="entry-memo">📌 ${escapeHtml(item.data.memo)}</div>`;
+                if (item.data.diary) html += `<div class="entry-text">${escapeHtml(item.data.diary)}</div>`;
+                if (item.data.image) html += `<img class="entry-image" src="${item.data.image}" alt="日记配图">`;
 
-                // 渲染图片 (直接读取Base64)
-                if (item.data.image) {
-                    html += `<img class="entry-image" src="${item.data.image}" alt="日记配图">`;
-                }
-
-                div.innerHTML = html;
-                listEl.appendChild(div);
+                div.innerHTML = html; listEl.appendChild(div);
             });
         }
 
         function escapeHtml(unsafe) {
-            return unsafe
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
+            return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+
+        // ==========================================
+        // 看板娘核心系统 (Pixi + 气泡交互)
+        // ==========================================
+        let waifuTipsTimer = null;
+
+        // 控制聊天气泡显示
+        function showMessage(text, timeout = 4000) {
+            const tips = document.getElementById('waifu-tips');
+            tips.innerHTML = text;
+            tips.classList.add('waifu-tips-active');
+            
+            clearTimeout(waifuTipsTimer);
+            waifuTipsTimer = setTimeout(() => {
+                tips.classList.remove('waifu-tips-active');
+            }, timeout);
+        }
+
+        async function initLive2D() {
+            const canvas = document.getElementById('waifu-canvas');
+            const app = new PIXI.Application({
+                view: canvas, transparent: true, backgroundAlpha: 0, width: 280, height: 320
+            });
+
+            // ⚠️【极度重要】配置你的芙莉莲路径！
+            // 我为了让你在右侧预览环境不出错，临时写了个网络公共测试模型的链接。
+            // 当你把你下载的 Frieren 文件夹放入 diary-main 之后，
+            // 请把下面这行链接改成你本地的相对路径，例如：
+            // const modelUrl = "./Frieren/Frieren.model3.json"; 
+            const modelUrl = "./Frieren/Frieren.model3.json";
+
+            try {
+                const model = await PIXI.live2d.Live2DModel.from(modelUrl);
+                app.stage.addChild(model);
+
+                // 根据画布自适应缩放人物
+                const scaleX = canvas.width / model.width;
+                const scaleY = canvas.height / model.height;
+                model.scale.set(Math.min(scaleX, scaleY) * 1.2); 
+                model.x = (canvas.width - model.width * model.scale.x) / 2;
+                model.y = canvas.height - model.height * model.scale.y + 20;
+
+                // 互动功能1：鼠标跟随注视
+                app.ticker.add(() => {
+                    const mouse = app.renderer.plugins.interaction.mouse.global;
+                    model.focus(mouse.x, mouse.y);
+                });
+
+                // 互动功能2：点击身体触发对话
+                model.on('pointertap', () => {
+                    const hitTexts = [
+                        "又点我？不好好学习的话，我可是会生气的。",
+                        "魔法的修行，可不能像这样偷懒哦。",
+                        "嗯... 怎么了？",
+                        "辛美尔当年可不会一直这样戳我。"
+                    ];
+                    const text = hitTexts[Math.floor(Math.random() * hitTexts.length)];
+                    showMessage(text);
+                });
+
+                // 如果模型自带随机动作，会自动播放（视你的芙莉莲模型配置而定）
+                // 启动时的问候
+                setTimeout(() => {
+                    if(document.getElementById('auth-overlay').style.display === 'none') {
+                        showMessage("我准备好啦！");
+                    }
+                }, 2000);
+
+            } catch (e) {
+                console.error("模型加载失败，请检查 URL 是否正确: ", e);
+            }
         }
     </script>
 </body>
