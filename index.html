@@ -338,87 +338,93 @@
             return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        // ==========================================
-        // 看板娘核心系统 (带有自动错误诊断的 PIXI 引擎)
-        // ==========================================
-        let waifuTipsTimer = null;
+ // ==========================================
+// 重写后的看板娘系统 (优化加载与交互)
+// ==========================================
+let waifuTipsTimer = null;
 
-        function showMessage(text, timeout = 5000) {
-            const tips = document.getElementById('waifu-tips');
-            tips.innerHTML = text;
-            tips.classList.add('waifu-tips-active');
-            
-            clearTimeout(waifuTipsTimer);
-            waifuTipsTimer = setTimeout(() => {
-                tips.classList.remove('waifu-tips-active');
-            }, timeout);
-        }
+function showMessage(text, timeout = 5000) {
+    const tips = document.getElementById('waifu-tips');
+    if (!tips) return;
+    tips.innerHTML = text;
+    tips.classList.add('waifu-tips-active');
+    
+    clearTimeout(waifuTipsTimer);
+    waifuTipsTimer = setTimeout(() => {
+        tips.classList.remove('waifu-tips-active');
+    }, timeout);
+}
 
-        async function initLive2D() {
-            // 一开始就显示正在加载
-            showMessage("🪄 正在召唤芙莉莲，请稍等...");
+async function initLive2D() {
+    showMessage("🪄 正在召唤芙莉莲...");
 
-            const canvas = document.getElementById('waifu-canvas');
-            const app = new PIXI.Application({
-                view: canvas, transparent: true, backgroundAlpha: 0, width: 280, height: 320
-            });
+    const canvas = document.getElementById('waifu-canvas');
+    const app = new PIXI.Application({
+        view: canvas,
+        transparent: true,
+        backgroundAlpha: 0,
+        width: 280,
+        height: 320,
+        antialias: true // 开启抗锯齿
+    });
 
-            // 如果报错 404，大概率是大小写错误或者路径写错了！
-            const modelUrl = "./Frieren/Frieren.model3.json";
+    // 确保路径正确（相对于 index.html）
+    const modelUrl = "./Frieren/Frieren.model3.json";
 
-            try {
-                // 读取模型
-                const model = await PIXI.live2d.Live2DModel.from(modelUrl);
-                app.stage.addChild(model);
+    try {
+        const model = await PIXI.live2d.Live2DModel.from(modelUrl);
+        app.stage.addChild(model);
 
-                // 缩放适配
-                const scaleX = canvas.width / model.width;
-                const scaleY = canvas.height / model.height;
-                model.scale.set(Math.min(scaleX, scaleY) * 1.2); 
-                model.x = (canvas.width - model.width * model.scale.x) / 2;
-                model.y = canvas.height - model.height * model.scale.y + 20;
+        // 自动适配缩放
+        const scale = Math.min(canvas.width / model.width, canvas.height / model.height) * 0.9;
+        model.scale.set(scale);
+        
+        // 居中并对齐底部
+        model.x = (canvas.width - model.width * scale) / 2;
+        model.y = (canvas.height - model.height * scale);
 
-                // 视线追踪
-                app.ticker.add(() => {
-                    const mouse = app.renderer.plugins.interaction.mouse.global;
-                    model.focus(mouse.x, mouse.y);
-                });
-
-                // 点击互动
-                model.on('pointertap', () => {
-                    const hitTexts = [
-                        "又点我？不好好学习的话，我可是会生气的。",
-                        "魔法的修行，可不能像这样偷懒哦。",
-                        "嗯... 怎么了？",
-                        "辛美尔当年可不会一直这样戳我。"
-                    ];
-                    const text = hitTexts[Math.floor(Math.random() * hitTexts.length)];
-                    showMessage(text);
-                });
-
-                // 加载成功提示
-                setTimeout(() => {
-                    if(document.getElementById('auth-overlay').style.display === 'none') {
-                        showMessage("我准备好啦！");
-                    } else {
-                        showMessage("我已经到了，先输入密码进房间吧~");
-                    }
-                }, 1000);
-
-            } catch (e) {
-                console.error("模型加载发生了致命错误: ", e);
-                // 🌟 【神级改动】直接把错误信息打印到气泡上，让你一目了然！ 🌟
-                let errorMsg = "模型加载失败：<br>";
-                if (e.message.includes("404")) {
-                    errorMsg += "⚠️ 找不到文件(404)！请严格检查 Frieren.model3.json 里面写的文件名<b>大小写</b>是否和实际文件一模一样！Linux服务器对大小写极度敏感！";
-                } else if (e.message.includes("fetch")) {
-                    errorMsg += "⚠️ 网络加载失败！可能是 Cloudflare 抽风，或者路径依然写错。";
-                } else {
-                    errorMsg += `<span style="color:red;font-size:12px;">${e.message}</span><br>按 F12 看看控制台的红色报错吧。`;
-                }
-                showMessage(errorMsg, 20000); // 错误信息停留20秒
+        // 交互设置
+        model.interactive = true; // 显式开启交互
+        
+        // 视线追踪优化
+        app.ticker.add(() => {
+            // 使用通用的全局鼠标坐标
+            const mouseData = app.renderer.plugins.interaction.mouse.global;
+            if (mouseData.x >= 0 && mouseData.y >= 0) {
+                model.focus(mouseData.x, mouseData.y);
             }
+        });
+
+        // 点击互动：即使 JSON 没写 HitAreas，PIXI-Live2D 也会尝试根据包围盒触发
+        model.on('pointertap', () => {
+            const hitTexts = [
+                "又点我？不好好学习的话，我可是会生气的。",
+                "魔法的修行，可不能像这样偷懒哦。",
+                "嗯... 怎么了？",
+                "辛美尔当年可不会一直这样戳我。"
+            ];
+            const text = hitTexts[Math.floor(Math.random() * hitTexts.length)];
+            showMessage(text);
+            
+            // 随机触发一个动作
+            const motions = ["daiji.motion3.json", "zs1.motion3.json"];
+            const randomMotion = motions[Math.floor(Math.random() * motions.length)];
+            model.motion(randomMotion);
+        });
+
+        showMessage("我准备好啦！");
+
+    } catch (e) {
+        console.error("Live2D 加载错误:", e);
+        let errorHint = "召唤失败了：";
+        if (e.message.includes("404")) {
+            errorHint += "找不到文件，请确认 Frieren 文件夹在 index.html 同级目录下。";
+        } else {
+            errorHint += "请检查浏览器控制台 (F12) 的具体报错。";
         }
+        showMessage(errorHint, 10000);
+    }
+}
     </script>
 </body>
 </html>
