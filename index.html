@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>学習日記 - 学习日记</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
-    <!-- 引入 FontAwesome 图标库，还原原版工具栏 UI -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
     
     <style>
@@ -62,62 +61,6 @@
         .auth-card input { padding: 10px; width: 100%; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 6px; text-align: center; font-size: 16px; background: transparent; color: var(--text-main); }
         .auth-card button { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; }
         .msg { text-align: center; margin-top: 10px; font-size: 13px; }
-
-        /* ========================================= */
-        /* 严格参照 live2d-widget 的原版 UI 样式 */
-        /* ========================================= */
-        #waifu {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            z-index: 9998;
-            pointer-events: none; 
-            display: flex;
-            align-items: flex-end;
-            transition: all 0.3s ease-in-out;
-        }
-
-        #waifu-tool {
-            display: flex;
-            flex-direction: column;
-            pointer-events: auto;
-            margin-bottom: 50px;
-            margin-right: 10px;
-            opacity: 0;
-            transform: translateX(20px);
-            transition: all 0.3s;
-        }
-        #waifu:hover #waifu-tool { opacity: 1; transform: translateX(0); }
-        
-        #waifu-tool span {
-            display: block; width: 32px; height: 32px; line-height: 32px;
-            text-align: center; color: #5b6c7d; cursor: pointer;
-            transition: color 0.2s; font-size: 18px; margin-bottom: 8px;
-        }
-        #waifu-tool span:hover { color: #0684bd; }
-
-        #waifu-canvas { pointer-events: auto; cursor: grab; }
-        #waifu-canvas:active { cursor: grabbing; }
-
-        #waifu-tips {
-            position: absolute; top: -70px; right: 40px; width: 250px; min-height: 40px;
-            background-color: rgba(255, 255, 255, 0.95); border: 1px solid #e1e1e1;
-            border-radius: 12px; padding: 10px 15px; box-shadow: 0 3px 15px rgba(0,0,0,0.1);
-            font-size: 13px; color: #333; opacity: 0; pointer-events: auto;
-            transition: opacity 0.3s; word-break: break-all;
-        }
-        #waifu-tips::after {
-            content: ''; position: absolute; bottom: -8px; right: 30px;
-            width: 15px; height: 15px; background-color: rgba(255, 255, 255, 0.95);
-            border-right: 1px solid #e1e1e1; border-bottom: 1px solid #e1e1e1;
-            transform: rotate(45deg);
-        }
-        .waifu-tips-active { opacity: 1 !important; animation: shake 0.8s ease-in-out; }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
     </style>
 </head>
 <body>
@@ -162,40 +105,17 @@
         </div>
     </div>
 
-    <!-- 看板娘UI -->
-    <div id="waifu">
-        <div id="waifu-tips"></div>
-        
-        <div id="waifu-tool">
-            <span class="fa fa-lg fa-comment" onclick="showMessage('要好好学习日语哦！不要偷懒~')" title="聊天"></span>
-            <span class="fa fa-lg fa-paper-plane" onclick="showMessage('魔法使的寿命可是很长的。')" title="一言"></span>
-            <span class="fa fa-lg fa-camera-retro" onclick="showMessage('照相机功能调试中...')" title="拍照"></span>
-            <span class="fa fa-lg fa-times" onclick="document.getElementById('waifu').style.display='none'" title="隐藏"></span>
-        </div>
-        
-        <canvas id="waifu-canvas" width="280" height="320"></canvas>
-    </div>
-
-    <!-- 🌟 终极解决方案：同时引入新旧双核心，彻底解决引擎初始化失败的问题 🌟 -->
-    <!-- 1. Cubism 2 Core (旧版核心，哪怕不用也必须引入当占位符，否则引擎会罢工报错) -->
-    <script src="https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js"></script>
-    <!-- 2. Cubism 4 Core (真正用于解析芙莉莲 .moc3 的现代核心) -->
-    <script src="https://cdn.jsdelivr.net/npm/live2dcubismcore@1.0.3/live2dcubismcore.min.js"></script>
-    <!-- 3. PIXI 渲染引擎 -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
-    <!-- 4. PIXI Live2D Display (最强大的全能加载器) -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js"></script>
+    <script src="https://fastly.jsdelivr.net/gh/WeiErLiTeo/live2d-widget@latest/autoload.js"></script>
 
     <script>
         // ==========================================
-        // 前后端交互逻辑
+        // 日记系统核心逻辑
         // ==========================================
         const API_BASE = '/api/diary';
         let currentPwd = localStorage.getItem('site_pwd') || '';
         let currentImageBase64 = null;
 
         window.onload = () => {
-            initLive2D(); // 加载看板娘
             if (currentPwd) loadEntries(true); 
         };
 
@@ -210,7 +130,6 @@
                     currentPwd = pwdInput; localStorage.setItem('site_pwd', currentPwd);
                     document.getElementById('auth-overlay').style.display = 'none';
                     loadEntries(false);
-                    setTimeout(() => showMessage("欢迎回来！今天也要好好记录哦~"), 1000);
                 } else {
                     msgEl.textContent = '密码错误'; msgEl.style.color = 'var(--error-color)';
                 }
@@ -264,7 +183,6 @@
                     msgEl.textContent = '保存成功'; msgEl.style.color = 'var(--accent-color)';
                     document.getElementById('memoInput').value = ''; document.getElementById('diaryInput').value = '';
                     removeImage(); loadEntries(false);
-                    showMessage("记录保存成功啦！真厉害~"); 
                     setTimeout(() => msgEl.textContent = '', 2000);
                 } else {
                     msgEl.textContent = '保存失败'; msgEl.style.color = 'var(--error-color)';
@@ -291,21 +209,15 @@
         }
 
         async function deleteEntry(id) {
-            if (!confirm("确定要删除这条日记吗？这个魔法无法撤销哦！")) return;
+            if (!confirm("确定要删除这条日记吗？")) return;
             try {
                 const res = await fetch(`${API_BASE}?id=${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': currentPwd }
+                    method: 'DELETE', headers: { 'Authorization': currentPwd }
                 });
-                
-                if (res.ok) {
-                    showMessage("已为你清除了这条记录的痕迹！"); 
-                    loadEntries(false);
-                } else {
-                    alert('删除失败，可能没有权限。');
-                }
+                if (res.ok) loadEntries(false);
+                else alert('删除失败');
             } catch (err) {
-                alert('网络错误，无法删除。');
+                alert('网络错误');
             }
         }
 
@@ -321,14 +233,13 @@
                 
                 let html = `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div class="entry-date" style="margin-bottom: 0;">${dateStr}</div>
-                        <button class="btn-delete" onclick="deleteEntry('${item.id}')">削除 (Delete)</button>
+                        <div class="entry-date">${dateStr}</div>
+                        <button class="btn-delete" onclick="deleteEntry('${item.id}')">削除</button>
                     </div>
                 `;
-
                 if (item.data.memo) html += `<div class="entry-memo">📌 ${escapeHtml(item.data.memo)}</div>`;
                 if (item.data.diary) html += `<div class="entry-text">${escapeHtml(item.data.diary)}</div>`;
-                if (item.data.image) html += `<img class="entry-image" src="${item.data.image}" alt="日记配图">`;
+                if (item.data.image) html += `<img class="entry-image" src="${item.data.image}">`;
 
                 div.innerHTML = html; listEl.appendChild(div);
             });
@@ -337,94 +248,6 @@
         function escapeHtml(unsafe) {
             return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
-
- // ==========================================
-// 重写后的看板娘系统 (优化加载与交互)
-// ==========================================
-let waifuTipsTimer = null;
-
-function showMessage(text, timeout = 5000) {
-    const tips = document.getElementById('waifu-tips');
-    if (!tips) return;
-    tips.innerHTML = text;
-    tips.classList.add('waifu-tips-active');
-    
-    clearTimeout(waifuTipsTimer);
-    waifuTipsTimer = setTimeout(() => {
-        tips.classList.remove('waifu-tips-active');
-    }, timeout);
-}
-
-async function initLive2D() {
-    showMessage("🪄 正在召唤芙莉莲...");
-
-    const canvas = document.getElementById('waifu-canvas');
-    const app = new PIXI.Application({
-        view: canvas,
-        transparent: true,
-        backgroundAlpha: 0,
-        width: 280,
-        height: 320,
-        antialias: true // 开启抗锯齿
-    });
-
-    // 确保路径正确（相对于 index.html）
-    const modelUrl = "./Frieren/Frieren.model3.json";
-
-    try {
-        const model = await PIXI.live2d.Live2DModel.from(modelUrl);
-        app.stage.addChild(model);
-
-        // 自动适配缩放
-        const scale = Math.min(canvas.width / model.width, canvas.height / model.height) * 0.9;
-        model.scale.set(scale);
-        
-        // 居中并对齐底部
-        model.x = (canvas.width - model.width * scale) / 2;
-        model.y = (canvas.height - model.height * scale);
-
-        // 交互设置
-        model.interactive = true; // 显式开启交互
-        
-        // 视线追踪优化
-        app.ticker.add(() => {
-            // 使用通用的全局鼠标坐标
-            const mouseData = app.renderer.plugins.interaction.mouse.global;
-            if (mouseData.x >= 0 && mouseData.y >= 0) {
-                model.focus(mouseData.x, mouseData.y);
-            }
-        });
-
-        // 点击互动：即使 JSON 没写 HitAreas，PIXI-Live2D 也会尝试根据包围盒触发
-        model.on('pointertap', () => {
-            const hitTexts = [
-                "又点我？不好好学习的话，我可是会生气的。",
-                "魔法的修行，可不能像这样偷懒哦。",
-                "嗯... 怎么了？",
-                "辛美尔当年可不会一直这样戳我。"
-            ];
-            const text = hitTexts[Math.floor(Math.random() * hitTexts.length)];
-            showMessage(text);
-            
-            // 随机触发一个动作
-            const motions = ["daiji.motion3.json", "zs1.motion3.json"];
-            const randomMotion = motions[Math.floor(Math.random() * motions.length)];
-            model.motion(randomMotion);
-        });
-
-        showMessage("我准备好啦！");
-
-    } catch (e) {
-        console.error("Live2D 加载错误:", e);
-        let errorHint = "召唤失败了：";
-        if (e.message.includes("404")) {
-            errorHint += "找不到文件，请确认 Frieren 文件夹在 index.html 同级目录下。";
-        } else {
-            errorHint += "请检查浏览器控制台 (F12) 的具体报错。";
-        }
-        showMessage(errorHint, 10000);
-    }
-}
     </script>
 </body>
 </html>
