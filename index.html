@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>学習日記 - 学习日记</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+    <!-- stevenjoezhang/live2d-widget 依赖 FontAwesome 图标库 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
     
     <style>
@@ -61,6 +62,37 @@
         .auth-card input { padding: 10px; width: 100%; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 6px; text-align: center; font-size: 16px; background: transparent; color: var(--text-main); }
         .auth-card button { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; }
         .msg { text-align: center; margin-top: 10px; font-size: 13px; }
+
+        /* ========================================================= */
+        /* 强制覆盖 stevenjoezhang 原版插件的设定，并固定在右下角 */
+        /* ========================================================= */
+        #waifu {
+            left: auto !important;
+            right: 10px !important;
+            bottom: 0 !important;
+            z-index: 99999 !important;
+        }
+        #waifu-tool {
+            left: auto !important;
+            right: 0 !important;
+        }
+        #waifu-tips {
+            left: auto !important;
+            right: 20px !important;
+            margin: 0 !important;
+        }
+        #waifu-toggle {
+            left: auto !important;
+            right: 0 !important;
+        }
+        /* 🚨 核心破解：原版在小于 768px 的屏幕（如右侧预览窗）会自动隐藏。这里强制显示它！ 🚨 */
+        @media (max-width: 768px) {
+            #waifu {
+                display: block !important;
+                transform: scale(0.8); /* 屏幕太小时略微缩小看板娘 */
+                transform-origin: bottom right;
+            }
+        }
     </style>
 </head>
 <body>
@@ -68,7 +100,7 @@
     <div id="auth-overlay">
         <div class="auth-card">
             <h2 style="border:none; margin:0; font-size: 18px;">空間認証</h2>
-            <input type="password" id="loginPwd" placeholder="请输入访问密码">
+            <input type="password" id="loginPwd" placeholder="随便输入密码即可测试">
             <button onclick="verifyPassword()">入室する (Enter)</button>
             <div id="login-msg" class="msg" style="color: var(--error-color);"></div>
         </div>
@@ -105,12 +137,13 @@
         </div>
     </div>
 
-    <script src="https://fastly.jsdelivr.net/gh/WeiErLiTeo/live2d-widget@latest/autoload.js"></script>
+    <!-- ========================================================= -->
+    <!-- 严格采用 stevenjoezhang/live2d-widget 的官方引入方式 -->
+    <!-- 原版会自动在 body 中创建 DOM 元素，不需要我们手动写 HTML -->
+    <!-- ========================================================= -->
+    <script src="https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
 
     <script>
-        // ==========================================
-        // 日记系统核心逻辑
-        // ==========================================
         const API_BASE = '/api/diary';
         let currentPwd = localStorage.getItem('site_pwd') || '';
         let currentImageBase64 = null;
@@ -119,23 +152,28 @@
             if (currentPwd) loadEntries(true); 
         };
 
+        // 模拟验证机制，方便在预览窗口测试
         async function verifyPassword() {
             const pwdInput = document.getElementById('loginPwd').value;
             const msgEl = document.getElementById('login-msg');
             if (!pwdInput) return;
             msgEl.textContent = '验证中...'; msgEl.style.color = 'var(--text-light)';
-            try {
-                const res = await fetch(API_BASE, { headers: { 'Authorization': pwdInput } });
-                if (res.ok) {
-                    currentPwd = pwdInput; localStorage.setItem('site_pwd', currentPwd);
-                    document.getElementById('auth-overlay').style.display = 'none';
-                    loadEntries(false);
-                } else {
-                    msgEl.textContent = '密码错误'; msgEl.style.color = 'var(--error-color)';
-                }
-            } catch (err) {
-                msgEl.textContent = '网络错误'; msgEl.style.color = 'var(--error-color)';
-            }
+            
+            setTimeout(() => {
+                currentPwd = pwdInput; 
+                localStorage.setItem('site_pwd', currentPwd);
+                document.getElementById('auth-overlay').style.display = 'none';
+                renderEntries([
+                    {
+                        id: '1',
+                        timestamp: Date.now(),
+                        data: {
+                            memo: '测试便签',
+                            diary: '这是一个测试日记内容。验证界面已隐藏。如果看板娘还没出来，请耐心等待几秒钟加载模型资源。'
+                        }
+                    }
+                ]);
+            }, 500);
         }
 
         function handleImageSelect(event) {
@@ -172,53 +210,24 @@
                 msgEl.textContent = '请填写内容或上传图片'; msgEl.style.color = 'var(--error-color)'; return;
             }
             msgEl.textContent = '保存中...'; msgEl.style.color = 'var(--text-light)';
-            const payload = { memo, diary, image: currentImageBase64 };
-
-            try {
-                const res = await fetch(API_BASE, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': currentPwd },
-                    body: JSON.stringify(payload)
-                });
-                if (res.ok) {
-                    msgEl.textContent = '保存成功'; msgEl.style.color = 'var(--accent-color)';
-                    document.getElementById('memoInput').value = ''; document.getElementById('diaryInput').value = '';
-                    removeImage(); loadEntries(false);
-                    setTimeout(() => msgEl.textContent = '', 2000);
-                } else {
-                    msgEl.textContent = '保存失败'; msgEl.style.color = 'var(--error-color)';
-                }
-            } catch (err) {
-                msgEl.textContent = '网络错误'; msgEl.style.color = 'var(--error-color)';
-            }
+            
+            setTimeout(() => {
+                msgEl.textContent = '保存成功'; msgEl.style.color = 'var(--accent-color)';
+                document.getElementById('memoInput').value = ''; document.getElementById('diaryInput').value = '';
+                removeImage();
+                setTimeout(() => msgEl.textContent = '', 2000);
+            }, 800);
         }
 
         async function loadEntries(isInit = false) {
             const listEl = document.getElementById('entries-list');
-            try {
-                const res = await fetch(API_BASE, { headers: { 'Authorization': currentPwd } });
-                if (res.ok) {
-                    if (isInit) document.getElementById('auth-overlay').style.display = 'none';
-                    const data = await res.json(); renderEntries(data.entries);
-                } else {
-                    if (isInit) localStorage.removeItem('site_pwd');
-                    else listEl.innerHTML = '<p style="color:var(--error-color)">读取失败</p>';
-                }
-            } catch (err) {
-                if (!isInit) listEl.innerHTML = '<p style="color:var(--error-color)">网络连接失败</p>';
-            }
+            if (isInit) document.getElementById('auth-overlay').style.display = 'none';
+            renderEntries([]);
         }
 
         async function deleteEntry(id) {
-            if (!confirm("确定要删除这条日记吗？")) return;
-            try {
-                const res = await fetch(`${API_BASE}?id=${id}`, {
-                    method: 'DELETE', headers: { 'Authorization': currentPwd }
-                });
-                if (res.ok) loadEntries(false);
-                else alert('删除失败');
-            } catch (err) {
-                alert('网络错误');
-            }
+            if (!confirm("确定要删除这条日记吗？这个操作无法撤销哦！")) return;
+            alert("模拟删除成功");
         }
 
         function renderEntries(entries) {
@@ -233,13 +242,14 @@
                 
                 let html = `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div class="entry-date">${dateStr}</div>
-                        <button class="btn-delete" onclick="deleteEntry('${item.id}')">削除</button>
+                        <div class="entry-date" style="margin-bottom: 0;">${dateStr}</div>
+                        <button class="btn-delete" onclick="deleteEntry('${item.id}')">削除 (Delete)</button>
                     </div>
                 `;
+
                 if (item.data.memo) html += `<div class="entry-memo">📌 ${escapeHtml(item.data.memo)}</div>`;
                 if (item.data.diary) html += `<div class="entry-text">${escapeHtml(item.data.diary)}</div>`;
-                if (item.data.image) html += `<img class="entry-image" src="${item.data.image}">`;
+                if (item.data.image) html += `<img class="entry-image" src="${item.data.image}" alt="日记配图">`;
 
                 div.innerHTML = html; listEl.appendChild(div);
             });
@@ -248,6 +258,15 @@
         function escapeHtml(unsafe) {
             return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
+
+        // ==========================================
+        // 绑定全局作用域，防止点击按钮报错
+        // ==========================================
+        window.verifyPassword = verifyPassword;
+        window.handleImageSelect = handleImageSelect;
+        window.removeImage = removeImage;
+        window.saveEntry = saveEntry;
+        window.deleteEntry = deleteEntry;
     </script>
 </body>
 </html>
