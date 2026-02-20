@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>日本語の日記</title>
+    <!-- 引入优雅的日文字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 护眼和风色彩 (Wabi-Sabi Colors) */
+            --bg-color: #F7F5F0;       /* 和纸底色 */
+            --card-bg: #FFFFFF;        /* 卡片纯白 */
+            --text-main: #4A4A4A;      /* 墨黑（柔和的黑色） */
+            --text-light: #8E8B82;     /* 浅墨色 */
+            --accent-green: #7B8D76;   /* 千草色/抹茶绿 */
+            --accent-hover: #63755E;   /* 深抹茶 */
+            --border-color: #E8E4D9;   /* 极浅的边框色 */
+            --danger-color: #D37B7B;   /* 退红色（报错） */
+        }
+
+        body {
+            font-family: 'Noto Serif JP', 'Yu Mincho', '宋体', serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        header p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        /* 现代圆角卡片 */
+        .paper-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+            padding: 30px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: transform 0.3s ease;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background-color: var(--accent-green);
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        /* 现代输入框风格 */
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-family: inherit;
+            background-color: #FCFAf8;
+            font-size: 15px;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent-green);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(123, 141, 118, 0.1);
+            background-color: #fff;
+        }
+
+        /* 按钮设计 */
+        .btn {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(123, 141, 118, 0.2);
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(123, 141, 118, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* 状态提示 */
+        .status-msg {
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+            min-height: 20px;
+        }
+        .status-error { color: var(--danger-color); }
+        .status-success { color: var(--accent-green); }
+
+        /* 日记记录展示区 */
+        .entry-item {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .entry-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .entry-date {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .entry-content {
+            white-space: pre-wrap;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        /* 单词和语法特别标识 */
+        .entry-badge {
+            background: #F4F1EA;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 10px;
+            color: var(--text-main);
+            white-space: pre-wrap;
+        }
+        .badge-title {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* 全屏密码认证遮罩层 */
+        #auth-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: opacity 0.4s ease;
+        }
+        .auth-card {
+            background: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .auth-card h2::before { display: none; }
+        .auth-card h2 { justify-content: center; margin-bottom: 30px; font-size: 22px; color: var(--text-main); }
+
+        /* 手机端适配调整 */
+        @media (max-width: 480px) {
+            .paper-card { padding: 20px; }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 密码验证遮罩 -->
+    <div id="auth-overlay">
+        <div class="auth-card">
+            <h2>認証 (Authentication)</h2>
+            <p style="color: var(--text-light); font-size: 13px; margin-bottom: 20px;">请输入空间访问密码</p>
+            <input type="password" id="loginPwd" placeholder="Password" style="margin-bottom: 20px; text-align: center;">
+            <button class="btn" onclick="verifyPassword()">入室する (Enter)</button>
+            <div id="login-msg" class="status-msg status-error"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>日本語の日記</h1>
+            <p>静かなる学びの記録</p>
+        </header>
+
+        <!-- 编辑区 -->
+        <div class="paper-card">
+            <h2>新しい記録 (新记录)</h2>
+            <div class="form-group">
+                <label>単語 (生词)</label>
+                <textarea id="vocab" rows="2" placeholder="例如：桜（さくら）- 樱花"></textarea>
+            </div>
+            <div class="form-group">
+                <label>文法 (语法)</label>
+                <textarea id="grammar" rows="2" placeholder="例如：～ようになる - 变得..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>本文 (日记正文)</label>
+                <textarea id="diary" rows="5" placeholder="今日は何をしましたか？"></textarea>
+            </div>
+            <button class="btn" onclick="saveEntry()">保存する (保存)</button>
+            <div id="save-msg" class="status-msg"></div>
+        </div>
+
+        <!-- 历史记录区 -->
+        <div class="paper-card" style="margin-top: 40px;">
+            <h2>過去の記録 (历史记录)</h2>
+            <div id="entries-list">
+                <p style="color: var(--text-light); text-align: center; font-size: 14px;">読み込み中... (加载中)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/diary'; // 相对路径，因为部署在同一个 Pages 项目下
+        let currentPwd = localStorage.getItem('site_pwd') || '';
+
+        // 初始化检查密码
+        window.onload = () => {
+            if (currentPwd) {
+                // 如果有本地密码，尝试加载数据测试密码是否正确
+                loadEntries(true);
+            }
+        };
+
+        // 验证密码登录
+        async function verifyPassword() {
+            const pwdInput = document.getElementById('loginPwd').value;
+            const msgEl = document.getElementById('login-msg');
+            if (!pwdInput) { msgEl.textContent = '密码不能为空'; return; }
+            
+            msgEl.textContent = '验证中...';
+            msgEl.className = 'status-msg status-success';
+
+            try {
+                // 发送测试请求
+                const res = await fetch(API_BASE, {
+                    headers: { 'Authorization': pwdInput }
+                });
+                
+                if (res.ok) {
+                    // 密码正确
+                    currentPwd = pwdInput;
+                    localStorage.setItem('site_pwd', currentPwd);
+                    document.getElementById('auth-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('auth-overlay').style.display = 'none', 400);
+                    loadEntries(false); // 加载列表
+                } else {
+                    msgEl.textContent = 'パスワードが違います (密码错误)';
+                    msgEl.className = 'status-msg status-error';
+                }
+            } catch (err) {
+                msgEl.textContent = '网络错误';
+                msgEl.className = 'status-msg status-error';
+            }
+        }
+
+        // 保存日记
+        async function saveEntry() {
+            const vocab = document.getElementById('vocab').value.trim();
+            const grammar = document.getElementById('grammar').value.trim();
+            const diary = document.getElementById('diary').value.trim();
+            const msgEl = document.getElementById('save-msg');
+
+            if (!vocab && !grammar && !diary) {
+                msgEl.textContent = '请至少填写一项内容。';
+                msgEl.className = 'status-msg status-error';
+                return;
+            }
+
+            msgEl.textContent = '保存中...';
+            msgEl.className = 'status-msg status-success';
+
+            const payload = { vocab, grammar, diary };
+
+            try {
+                const res = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': currentPwd
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    msgEl.textContent = '保存成功！';
+                    document.getElementById('vocab').value = '';
+                    document.getElementById('grammar').value = '';
+                    document.getElementById('diary').value = '';
+                    loadEntries(false);
+                    setTimeout(() => msgEl.textContent = '', 3000);
+                } else {
+                    msgEl.textContent = '保存失败，请检查密码。';
+                    msgEl.className = 'status-msg status-error';
+                }
+            } catch (err) {
+                msgEl.textContent = '网络错误: ' + err.message;
+                msgEl.className = 'status-msg status-error';
+            }
+        }
+
+        // 加载日记列表
+        async function loadEntries(isInitialCheck = false) {
+            const listEl = document.getElementById('entries-list');
+            
+            try {
+                const res = await fetch(API_BASE, {
+                    headers: { 'Authorization': currentPwd }
+                });
+
+                if (res.ok) {
+                    if (isInitialCheck) {
+                        document.getElementById('auth-overlay').style.display = 'none';
+                    }
+                    const data = await res.json();
+                    renderEntries(data.entries);
+                } else {
+                    if (isInitialCheck) {
+                        // 初始检查失败，说明本地密码已失效，显示登录框
+                        localStorage.removeItem('site_pwd');
+                    } else {
+                        listEl.innerHTML = '<p class="status-error">读取失败，认证无效。</p>';
+                    }
+                }
+            } catch (err) {
+                if (!isInitialCheck) {
+                    listEl.innerHTML = '<p class="status-error">网络连接失败。</p>';
+                }
+            }
+        }
+
+        // 渲染日记列表
+        function renderEntries(entries) {
+            const listEl = document.getElementById('entries-list');
+            listEl.innerHTML = '';
+
+            if (!entries || entries.length === 0) {
+                listEl.innerHTML = '<p style="color: var(--text-light); text-align: center;">まだ記録がありません。</p>';
+                return;
+            }
+
+            entries.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'entry-item';
+                
+                const date = new Date(item.timestamp);
+                const dateStr = `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`;
+                const timeStr = `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+                
+                let html = `<div class="entry-date"><span>${dateStr}</span><span>${timeStr}</span></div>`;
+
+                if (item.data.diary) {
+                    html += `<div class="entry-content">${escapeHtml(item.data.diary)}</div>`;
+                }
+                if (item.data.vocab) {
+                    html += `<div class="entry-badge"><span class="badge-title">📌 单词</span>${escapeHtml(item.data.vocab)}</div>`;
+                }
+                if (item.data.grammar) {
+                    html += `<div class="entry-badge"><span class="badge-title">📖 语法</span>${escapeHtml(item.data.grammar)}</div>`;
+                }
+
+                div.innerHTML = html;
+                listEl.appendChild(div);
+            });
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
